@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from decimal import Decimal
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -31,7 +32,7 @@ def cart_view(request):
             pass
 
     delivery_fee = 3.99 if subtotal > 0 else 0
-    grand_total = subtotal + delivery_fee
+    grand_total = subtotal + Decimal(str(delivery_fee))
 
     context = {
         'cart_items': cart_items,
@@ -138,7 +139,7 @@ def checkout_view(request):
             pass
 
     profile = request.user.profile
-    delivery_fee = 3.99
+    delivery_fee = Decimal('3.99')
 
     if request.method == 'POST':
         delivery_method = request.POST.get('delivery_method', 'delivery')

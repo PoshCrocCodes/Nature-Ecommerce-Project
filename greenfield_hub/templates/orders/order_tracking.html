@@ -45,7 +45,7 @@
 
         <div class="relative flex justify-between">
           {% for step in statuses %}
-          <div class="flex flex-col items-center" style="width: {{ 100|divisibleby:statuses|count }}%">
+          <div class="flex flex-col items-center" style="width: {% widthratio 100 1 statuses|length %}%">
             <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl border-2 transition-all z-10
               {% if forloop.counter0 <= current_step %}border-gf-green bg-gf-green text-white{% else %}border-gray-200 bg-white{% endif %}">
               {{ step.icon }}
