@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block title %}Create Account — Greenfield Local Hub{% endblock %}
+
+{% block content %}
+<div class="min-h-screen pt-24 pb-16 bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center px-4">
+  <div class="w-full max-w-2xl">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <a href="{% url 'home' %}" class="inline-flex items-center gap-2 text-gf-green font-semibold text-xl mb-6">
+        <span class="text-2xl">🌿</span> Greenfield Local Hub
+      </a>
+      <h1 class="font-display text-4xl font-bold text-gf-navy">Create Your Account</h1>
+      <p class="text-gray-500 mt-2">Join our community of local food lovers</p>
+    </div>
+
+    <!-- Card -->
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-10">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <!-- Role selection -->
+        <div class="mb-8">
+          <label class="block text-sm font-semibold text-gray-700 mb-3">I am joining as...</label>
+          <div class="grid grid-cols-2 gap-3">
+            {% for radio in form.role %}
+            <label class="relative cursor-pointer">
+              {{ radio.tag }}
+              <div class="role-card border-2 border-gray-200 rounded-2xl p-4 text-center hover:border-gf-green transition-all peer-checked:border-gf-green peer-checked:bg-green-50">
+                <div class="text-2xl mb-1">{% if forloop.first %}🛒{% else %}🌾{% endif %}</div>
+                <div class="font-semibold text-sm text-gf-navy">{% if forloop.first %}Consumer{% else %}Producer{% endif %}</div>
+                <div class="text-xs text-gray-400 mt-1">{% if forloop.first %}Buy fresh local produce{% else %}Sell your farm products{% endif %}</div>
+              </div>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Name row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">First Name *</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.first_name.errors|join:", " }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Last Name *</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.last_name.errors|join:", " }}</p>{% endif %}
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Username *</label>
+          {{ form.username }}
+          {% if form.username.errors %}<p class="text-red-500 text-xs mt-1">{{ form.username.errors|join:", " }}</p>{% endif %}
+        </div>
+
+        <!-- Email -->
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email Address *</label>
+          {{ form.email }}
+          {% if form.email.errors %}<p class="text-red-500 text-xs mt-1">{{ form.email.errors|join:", " }}</p>{% endif %}
+        </div>
+
+        <!-- Phone -->
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Phone Number (optional)</label>
+          {{ form.phone }}
+        </div>
+
+        <!-- Farm name — shown only for producers -->
+        <div id="farm-name-field" class="mb-4 hidden">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Farm / Business Name *</label>
+          {{ form.farm_name }}
+          {% if form.farm_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.farm_name.errors|join:", " }}</p>{% endif %}
+        </div>
+
+        <!-- Passwords -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Password *</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}<p class="text-red-500 text-xs mt-1">{{ form.password1.errors|join:", " }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Confirm Password *</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}<p class="text-red-500 text-xs mt-1">{{ form.password2.errors|join:", " }}</p>{% endif %}
+          </div>
+        </div>
+
+        <!-- Newsletter opt-in -->
+        <div class="mb-4 flex items-start gap-3 p-4 rounded-xl bg-green-50 border border-green-100">
+          {{ form.newsletter_opt_in }}
+          <label for="{{ form.newsletter_opt_in.id_for_label }}" class="text-sm text-gray-600 cursor-pointer">
+            {{ form.newsletter_opt_in.label }}
+          </label>
+        </div>
+
+        <!-- T&C acceptance -->
+        <div class="mb-6 flex items-start gap-3 p-4 rounded-xl bg-blue-50 border border-blue-100">
+          {{ form.accepted_terms }}
+          <label for="{{ form.accepted_terms.id_for_label }}" class="text-sm text-gray-700 cursor-pointer">
+            I agree to the
+            <a href="{% url 'terms' %}" class="text-gf-green font-semibold hover:underline" target="_blank">Terms & Conditions</a>
+            and
+            <a href="{% url 'privacy' %}" class="text-gf-green font-semibold hover:underline" target="_blank">Privacy Policy</a>
+            of Greenfield Local Hub. *
+          </label>
+        </div>
+        {% if form.accepted_terms.errors %}
+        <p class="text-red-500 text-xs mb-4">{{ form.accepted_terms.errors|join:", " }}</p>
+        {% endif %}
+
+        <!-- Non-field errors -->
+        {% if form.non_field_errors %}
+        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+          {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <button type="submit"
+                class="w-full py-4 bg-gf-green hover:bg-gf-green-600 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5">
+          Create My Account 🌿
+        </button>
+      </form>
+
+      <p class="text-center text-gray-500 text-sm mt-6">
+        Already have an account?
+        <a href="{% url 'login' %}" class="text-gf-green font-semibold hover:underline">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Hide the default radio button, style the card instead */
+  .role-card { transition: all 0.2s; }
+  input[type=radio].role-radio { position: absolute; opacity: 0; }
+  input[type=radio].role-radio:checked + .role-card {
+    border-color: #1a6b3e;
+    background-color: #f0fdf4;
+    box-shadow: 0 0 0 2px rgba(26,107,62,0.2);
+  }
+</style>
+
+<script>
+  // Show farm name field only for producers
+  const radios = document.querySelectorAll('input[name="role"]');
+  const farmField = document.getElementById('farm-name-field');
+
+  function updateFarmField() {
+    const selected = document.querySelector('input[name="role"]:checked');
+    if (selected && selected.value === 'producer') {
+      farmField.classList.remove('hidden');
+    } else {
+      farmField.classList.add('hidden');
+    }
+  }
+
+  radios.forEach(r => r.addEventListener('change', updateFarmField));
+  updateFarmField();
+</script>
+{% endblock %}

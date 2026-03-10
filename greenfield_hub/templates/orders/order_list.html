@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}My Orders — Greenfield Local Hub{% endblock %}
+{% block content %}
+<div class="pt-24 pb-16 min-h-screen bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+    <h1 class="font-display text-4xl font-bold text-gf-navy mb-8">My Orders</h1>
+    {% if orders %}
+    <div class="space-y-4">
+      {% for order in orders %}
+      <a href="{% url 'order_tracking' order.tracking_code %}" class="block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gf-green transition p-6 group">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p class="font-mono text-sm text-gray-400 mb-1">{{ order.tracking_code }}</p>
+            <p class="font-display font-semibold text-xl text-gf-navy group-hover:text-gf-green transition">{{ order.items.count }} item{{ order.items.count|pluralize }}</p>
+            <p class="text-sm text-gray-400 mt-1">{{ order.created_at|date:"d M Y, H:i" }}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-bold text-2xl text-gf-navy">£{{ order.grand_total }}</p>
+            <span class="inline-block mt-1 text-xs font-semibold px-3 py-1 rounded-full
+              {% if order.status == 'delivered' %}bg-green-100 text-gf-green
+              {% elif order.status == 'cancelled' %}bg-red-100 text-red-600
+              {% elif order.status == 'pending' %}bg-blue-100 text-blue-600
+              {% else %}bg-amber-100 text-amber-700{% endif %}">
+              {{ order.get_status_display }}
+            </span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-24 bg-white rounded-3xl border border-gray-100">
+      <span class="text-7xl mb-5 block">📦</span>
+      <h2 class="font-display text-2xl font-bold text-gf-navy mb-3">No orders yet</h2>
+      <p class="text-gray-400 mb-8">Your orders will appear here after your first purchase.</p>
+      <a href="{% url 'product_list' %}" class="bg-gf-green text-white font-bold px-8 py-4 rounded-2xl hover:bg-gf-green-600 transition">Start Shopping</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

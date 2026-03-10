@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Shopping Cart — Greenfield Local Hub{% endblock %}
+{% block content %}
+<div class="pt-24 pb-16 min-h-screen bg-gray-50">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    <h1 class="font-display text-4xl font-bold text-gf-navy mb-8">🛒 Your Cart</h1>
+
+    {% if cart_items %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Items -->
+      <div class="lg:col-span-2 space-y-4">
+        {% for item in cart_items %}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex gap-4">
+          <a href="{{ item.product.get_absolute_url }}" class="flex-shrink-0">
+            {% if item.product.image %}
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-20 h-20 rounded-xl object-cover">
+            {% else %}
+            <div class="w-20 h-20 rounded-xl bg-green-50 flex items-center justify-center text-3xl">{{ item.product.category.icon|default:"🌿" }}</div>
+            {% endif %}
+          </a>
+          <div class="flex-1 min-w-0">
+            <a href="{{ item.product.get_absolute_url }}" class="font-display font-semibold text-gf-navy hover:text-gf-green transition">{{ item.product.name }}</a>
+            <p class="text-sm text-gray-400 mt-0.5">£{{ item.product.price }} / {{ item.product.get_unit_display }}</p>
+            <div class="flex items-center justify-between mt-3">
+              <form method="post" action="{% url 'update_cart' item.product.id %}" class="flex items-center gap-2">
+                {% csrf_token %}
+                <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden">
+                  <button type="submit" name="quantity" value="{{ item.quantity|add:-1 }}" class="px-3 py-2 hover:bg-gray-50 transition text-gray-600 font-bold">−</button>
+                  <span class="w-10 text-center font-semibold text-sm">{{ item.quantity }}</span>
+                  <button type="submit" name="quantity" value="{{ item.quantity|add:1 }}" class="px-3 py-2 hover:bg-gray-50 transition text-gray-600 font-bold">+</button>
+                </div>
+              </form>
+              <div class="flex items-center gap-4">
+                <span class="font-bold text-gf-navy">£{{ item.item_total }}</span>
+                <form method="post" action="{% url 'remove_from_cart' item.product.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="text-red-400 hover:text-red-600 transition text-sm">Remove</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Summary -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 h-fit sticky top-24">
+        <h2 class="font-display font-semibold text-xl text-gf-navy mb-5">Order Summary</h2>
+        <div class="space-y-3 mb-5">
+          <div class="flex justify-between text-sm"><span class="text-gray-500">Subtotal</span><span class="font-semibold">£{{ subtotal }}</span></div>
+          <div class="flex justify-between text-sm"><span class="text-gray-500">Delivery</span><span class="font-semibold">£{{ delivery_fee }}</span></div>
+          <div class="border-t border-gray-100 pt-3 flex justify-between font-bold text-lg"><span class="text-gf-navy">Total</span><span class="text-gf-navy">£{{ grand_total }}</span></div>
+        </div>
+        <a href="{% url 'checkout' %}" class="block w-full text-center py-4 bg-gf-green text-white font-bold rounded-xl hover:bg-gf-green-600 transition shadow-lg">Proceed to Checkout →</a>
+        <a href="{% url 'product_list' %}" class="block text-center mt-3 text-sm text-gray-400 hover:text-gf-green transition">← Continue Shopping</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="text-center py-24 bg-white rounded-3xl border border-gray-100">
+      <span class="text-7xl mb-5 block">🛒</span>
+      <h2 class="font-display text-2xl font-bold text-gf-navy mb-3">Your cart is empty</h2>
+      <p class="text-gray-400 mb-8">Discover fresh produce from local farmers.</p>
+      <a href="{% url 'product_list' %}" class="bg-gf-green text-white font-bold px-8 py-4 rounded-2xl hover:bg-gf-green-600 transition shadow-lg">Shop Now</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

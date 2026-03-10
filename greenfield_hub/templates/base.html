@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Greenfield Local Hub — Fresh produce directly from local farms to your door." />
+  <title>{% block title %}Greenfield Local Hub{% endblock %}</title>
+
+  <!-- Google Fonts: Playfair Display + DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'gf-navy':   { DEFAULT: '#0f2d4a', 50: '#e8f0f8', 100: '#c5d8ec', 200: '#9bbcd9', 300: '#6d9ec5', 400: '#4585b6', 500: '#2a6ea4', 600: '#1e5a8f', 700: '#154778', 800: '#0f2d4a', 900: '#08192b' },
+            'gf-green':  { DEFAULT: '#1a6b3e', 50:  '#edf7f1', 100: '#c7e9d6', 200: '#9dd6b7', 300: '#68be8f', 400: '#3da86d', 500: '#1a9551', 600: '#1a6b3e', 700: '#145530', 800: '#0d3d22', 900: '#062515' },
+            'gf-amber':  { DEFAULT: '#d4a04a', 50: '#fdf6e8', 100: '#f7e3b8', 200: '#f0cb7c', 300: '#e8b044', 400: '#d4a04a', 500: '#b8862c', 600: '#9a6c1a', 700: '#7c5510', 800: '#5e3f0b', 900: '#402a06' },
+          },
+          fontFamily: {
+            'display': ['"Playfair Display"', 'Georgia', 'serif'],
+            'body':    ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* ── Floating transparent navbar ─────────────────────────────────────── */
+    #main-nav {
+      transition: background-color 0.4s ease, backdrop-filter 0.4s ease,
+                  box-shadow 0.4s ease, padding 0.3s ease;
+    }
+    #main-nav.scrolled {
+      background-color: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 2px 24px rgba(15, 45, 74, 0.12);
+    }
+    #main-nav.scrolled .nav-link { color: #0f2d4a; }
+    #main-nav.scrolled .nav-logo { color: #0f2d4a; }
+    #main-nav.scrolled #mobile-menu-btn { color: #0f2d4a; }
+
+    /* Green scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #1a6b3e; border-radius: 3px; }
+
+    /* Toast messages */
+    .toast-enter { animation: toastIn 0.35s ease; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Star rating */
+    .star-filled { color: #d4a04a; }
+    .star-empty  { color: #d1d5db; }
+
+    /* Page fade-in */
+    main { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Dropdown */
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-menu { display: none; }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-white text-gray-800 antialiased">
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!--  SIENNA ACCESSIBILITY WIDGET                                           -->
+  <!--  ──────────────────────────────────────────────────────────────────── -->
+  <!--  Replace the placeholder below with your Sienna widget script tag.    -->
+  <!--  Example (replace with your actual Sienna embed code):                -->
+  <!--  <script src="https://cdn.sienna.ai/widget.js"                        -->
+  <!--          data-key="YOUR_SIENNA_API_KEY" async defer></script>         -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <script>
+    // SIENNA ACCESSIBILITY WIDGET PLACEHOLDER
+    // Replace this entire block with the Sienna widget embed code
+    // provided by your Sienna dashboard.
+    console.log('[Greenfield] Sienna accessibility widget placeholder active. Replace with actual script.');
+  </script>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!--  FLOATING STICKY NAVBAR                                                -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 {% if request.resolver_match.url_name == 'home' %}py-4{% else %}py-3 bg-white/97 backdrop-blur-md shadow-sm{% endif %}">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="{% url 'home' %}" class="nav-logo flex items-center gap-2.5 font-display font-bold text-xl {% if request.resolver_match.url_name == 'home' %}text-white{% else %}text-gf-navy{% endif %} hover:opacity-80 transition">
+        <span class="text-2xl">🌿</span>
+        <span>Greenfield</span>
+        <span class="text-sm font-body font-light opacity-75 hidden sm:inline">Local Hub</span>
+      </a>
+
+      <!-- Desktop nav links -->
+      <div class="hidden md:flex items-center gap-6">
+        <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white/90{% else %}text-gf-navy/80{% endif %} hover:text-gf-green font-medium text-sm transition">Home</a>
+
+        <!-- Shop dropdown -->
+        <div class="nav-dropdown relative">
+          <a href="{% url 'product_list' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white/90{% else %}text-gf-navy/80{% endif %} hover:text-gf-green font-medium text-sm transition flex items-center gap-1">
+            Shop
+            <svg class="w-3.5 h-3.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </a>
+          <div class="dropdown-menu absolute top-full left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50">
+            <a href="{% url 'product_list' %}" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-gf-green transition">All Products</a>
+            {% for cat in nav_categories %}
+            <a href="{% url 'product_list' %}?category={{ cat.slug }}" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-gf-green transition">
+              {{ cat.icon }} {{ cat.name }}
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <a href="{% url 'about' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white/90{% else %}text-gf-navy/80{% endif %} hover:text-gf-green font-medium text-sm transition">About</a>
+
+        {% if user.is_authenticated and user.profile.is_producer %}
+        <a href="{% url 'producer_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white/90{% else %}text-gf-navy/80{% endif %} hover:text-gf-green font-medium text-sm transition">Dashboard</a>
+        {% endif %}
+      </div>
+
+      <!-- Right actions -->
+      <div class="flex items-center gap-3">
+        <!-- Cart -->
+        <a href="{% url 'cart' %}" class="relative p-2 rounded-xl {% if request.resolver_match.url_name == 'home' %}text-white hover:bg-white/20{% else %}text-gf-navy hover:bg-gray-100{% endif %} transition" aria-label="Shopping cart">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          {% if cart_count > 0 %}
+          <span class="absolute -top-1 -right-1 bg-gf-amber text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ cart_count }}</span>
+          {% endif %}
+        </a>
+
+        {% if user.is_authenticated %}
+        <!-- User menu -->
+        <div class="nav-dropdown relative">
+          <button class="flex items-center gap-2 p-2 rounded-xl {% if request.resolver_match.url_name == 'home' %}text-white hover:bg-white/20{% else %}text-gf-navy hover:bg-gray-100{% endif %} transition text-sm font-medium">
+            <div class="w-7 h-7 rounded-full bg-gf-green text-white flex items-center justify-center text-xs font-bold">
+              {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+            </div>
+            <span class="hidden sm:inline">{{ user.first_name }}</span>
+          </button>
+          <div class="dropdown-menu absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50">
+            <a href="{% url 'profile' %}" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-gf-navy transition">👤 My Profile</a>
+            <a href="{% url 'order_list' %}" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-gf-navy transition">📦 My Orders</a>
+            {% if user.profile.is_producer %}
+            <a href="{% url 'producer_dashboard' %}" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-gf-green transition">🌾 Dashboard</a>
+            <a href="{% url 'add_product' %}" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-gf-green transition">➕ Add Product</a>
+            {% endif %}
+            <div class="border-t border-gray-100 mt-1 pt-1">
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">🚪 Sign Out</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <a href="{% url 'login' %}" class="text-sm font-medium px-4 py-2 rounded-xl {% if request.resolver_match.url_name == 'home' %}text-white hover:bg-white/20{% else %}text-gf-navy hover:bg-gray-100{% endif %} transition">Login</a>
+        <a href="{% url 'signup' %}" class="text-sm font-semibold px-4 py-2 bg-gf-green text-white rounded-xl hover:bg-gf-green-700 transition shadow-sm">Sign Up</a>
+        {% endif %}
+
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl {% if request.resolver_match.url_name == 'home' %}text-white{% else %}text-gf-navy{% endif %} hover:bg-black/10 transition" aria-label="Open menu">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-lg">
+      <div class="px-4 py-4 space-y-1">
+        <a href="{% url 'home' %}" class="block px-3 py-2.5 text-gray-700 font-medium rounded-lg hover:bg-green-50 hover:text-gf-green transition">Home</a>
+        <a href="{% url 'product_list' %}" class="block px-3 py-2.5 text-gray-700 font-medium rounded-lg hover:bg-green-50 hover:text-gf-green transition">Shop</a>
+        <a href="{% url 'about' %}" class="block px-3 py-2.5 text-gray-700 font-medium rounded-lg hover:bg-green-50 hover:text-gf-green transition">About</a>
+        <a href="{% url 'cart' %}" class="block px-3 py-2.5 text-gray-700 font-medium rounded-lg hover:bg-green-50 hover:text-gf-green transition">🛒 Cart ({{ cart_count }})</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}" class="block px-3 py-2.5 text-gray-700 font-medium rounded-lg hover:bg-green-50 hover:text-gf-green transition">My Profile</a>
+        <a href="{% url 'order_list' %}" class="block px-3 py-2.5 text-gray-700 font-medium rounded-lg hover:bg-green-50 hover:text-gf-green transition">My Orders</a>
+        {% if user.profile.is_producer %}
+        <a href="{% url 'producer_dashboard' %}" class="block px-3 py-2.5 text-gray-700 font-medium rounded-lg hover:bg-green-50 hover:text-gf-green transition">Producer Dashboard</a>
+        {% endif %}
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="w-full text-left px-3 py-2.5 text-red-600 font-medium rounded-lg hover:bg-red-50 transition">Sign Out</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}" class="block px-3 py-2.5 text-gray-700 font-medium rounded-lg hover:bg-green-50 transition">Login</a>
+        <a href="{% url 'signup' %}" class="block px-3 py-2.5 text-white font-medium bg-gf-green rounded-lg hover:bg-gf-green-700 transition">Sign Up</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!--  DJANGO MESSAGES / TOAST NOTIFICATIONS                                 -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  {% if messages %}
+  <div id="toast-container" class="fixed top-20 right-4 z-[100] space-y-2 max-w-sm">
+    {% for message in messages %}
+    <div class="toast-enter flex items-start gap-3 p-4 rounded-xl shadow-lg border text-sm
+      {% if message.tags == 'success' %}bg-green-50 border-green-200 text-green-800
+      {% elif message.tags == 'error' %}bg-red-50 border-red-200 text-red-800
+      {% elif message.tags == 'warning' %}bg-amber-50 border-amber-200 text-amber-800
+      {% else %}bg-blue-50 border-blue-200 text-blue-800{% endif %}"
+      role="alert">
+      <span class="text-lg leading-none">
+        {% if message.tags == 'success' %}✅
+        {% elif message.tags == 'error' %}❌
+        {% elif message.tags == 'warning' %}⚠️
+        {% else %}ℹ️{% endif %}
+      </span>
+      <p class="flex-1 font-medium">{{ message }}</p>
+      <button onclick="this.closest('[role=alert]').remove()" class="opacity-50 hover:opacity-100 transition">✕</button>
+    </div>
+    {% endfor %}
+  </div>
+  <script>
+    // Auto-dismiss toasts after 5 seconds
+    setTimeout(() => {
+      document.querySelectorAll('#toast-container [role=alert]').forEach(el => {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 5000);
+  </script>
+  {% endif %}
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!--  MAIN CONTENT                                                          -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!--  FOOTER                                                                -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <footer class="bg-gf-navy text-white pt-16 pb-8 mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+
+        <!-- Brand column -->
+        <div class="lg:col-span-2">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-3xl">🌿</span>
+            <span class="font-display font-bold text-2xl">Greenfield</span>
+            <span class="text-sm font-light opacity-60">Local Hub</span>
+          </div>
+          <p class="text-white/70 text-sm leading-relaxed max-w-sm">
+            A cooperative organisation connecting local farmers and food producers with communities across the region.
+            Fresh, sustainable, and traceable — straight from our fields to your table.
+          </p>
+          <div class="flex gap-3 mt-6">
+            <a href="#" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-gf-green flex items-center justify-center transition" aria-label="Facebook">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-gf-green flex items-center justify-center transition" aria-label="Instagram">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke-width="2"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke-width="2"/></svg>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-gf-green flex items-center justify-center transition" aria-label="Twitter">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick links -->
+        <div>
+          <h4 class="font-display font-semibold text-lg mb-4">Explore</h4>
+          <ul class="space-y-2.5 text-sm text-white/70">
+            <li><a href="{% url 'home' %}" class="hover:text-gf-green-300 transition">Home</a></li>
+            <li><a href="{% url 'product_list' %}" class="hover:text-gf-green-300 transition">Shop All Products</a></li>
+            <li><a href="{% url 'about' %}" class="hover:text-gf-green-300 transition">About Greenfield</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'order_list' %}" class="hover:text-gf-green-300 transition">My Orders</a></li>
+            <li><a href="{% url 'profile' %}" class="hover:text-gf-green-300 transition">My Account</a></li>
+            {% else %}
+            <li><a href="{% url 'signup' %}" class="hover:text-gf-green-300 transition">Create Account</a></li>
+            <li><a href="{% url 'login' %}" class="hover:text-gf-green-300 transition">Sign In</a></li>
+            {% endif %}
+          </ul>
+        </div>
+
+        <!-- Legal & contact -->
+        <div>
+          <h4 class="font-display font-semibold text-lg mb-4">Information</h4>
+          <ul class="space-y-2.5 text-sm text-white/70">
+            <li><a href="{% url 'terms' %}" class="hover:text-gf-green-300 transition">Terms & Conditions</a></li>
+            <li><a href="{% url 'privacy' %}" class="hover:text-gf-green-300 transition">Privacy Policy</a></li>
+            <li><a href="{% url 'cookie_policy' %}" class="hover:text-gf-green-300 transition">Cookie Policy</a></li>
+          </ul>
+          <div class="mt-6 text-sm text-white/60">
+            <p class="flex items-center gap-2 mb-1.5">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              Greenfield Lane, Countryside
+            </p>
+            <p class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              hello@greenfieldlocalhub.co.uk
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-sm text-white/50">© {% now "Y" %} Greenfield Local Hub. All rights reserved.</p>
+        <div class="flex items-center gap-2 text-sm text-white/50">
+          <span>🌿</span>
+          <span>Supporting local farmers since 2018</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!--  COOKIE CONSENT BANNER                                                 -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 z-[200] bg-gf-navy/98 backdrop-blur text-white shadow-2xl border-t border-white/10 transform transition-transform duration-500" style="display:none;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center gap-5">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xl">🍪</span>
+            <h3 class="font-display font-semibold text-lg">Cookie Preferences</h3>
+          </div>
+          <p class="text-sm text-white/75 leading-relaxed">
+            We use cookies to enhance your browsing experience, remember your preferences, and analyse site traffic.
+            Essential cookies are always active. You can choose whether to accept optional cookies below.
+            <a href="{% url 'cookie_policy' %}" class="underline text-gf-green-300 hover:text-white transition ml-1">Learn more →</a>
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
+          <button id="cookie-manage-btn" onclick="toggleCookieDetails()" class="px-4 py-2.5 text-sm font-medium text-white/80 border border-white/30 rounded-xl hover:bg-white/10 transition">
+            Manage Preferences
+          </button>
+          <button id="cookie-reject-btn" onclick="setCookieConsent('essential')" class="px-4 py-2.5 text-sm font-medium text-white/80 border border-white/30 rounded-xl hover:bg-white/10 transition">
+            Essential Only
+          </button>
+          <button id="cookie-accept-btn" onclick="setCookieConsent('all')" class="px-5 py-2.5 text-sm font-semibold bg-gf-green text-white rounded-xl hover:bg-gf-green-600 transition shadow-lg">
+            Accept All Cookies
+          </button>
+        </div>
+      </div>
+
+      <!-- Expanded preferences panel -->
+      <div id="cookie-details" class="hidden mt-5 pt-5 border-t border-white/10">
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="bg-white/5 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-semibold text-sm">Essential Cookies</span>
+              <span class="text-xs bg-gf-green/30 text-gf-green-200 px-2 py-0.5 rounded-full">Always on</span>
+            </div>
+            <p class="text-xs text-white/60">Required for login, cart, and site security. Cannot be disabled.</p>
+          </div>
+          <div class="bg-white/5 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-semibold text-sm">Analytics Cookies</span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="analytics-toggle" class="sr-only peer" checked>
+                <div class="w-10 h-5 bg-white/20 peer-checked:bg-gf-green rounded-full transition peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:w-4 after:h-4 after:transition"></div>
+              </label>
+            </div>
+            <p class="text-xs text-white/60">Help us understand how visitors use our site to improve your experience.</p>
+          </div>
+          <div class="bg-white/5 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-semibold text-sm">Marketing Cookies</span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="marketing-toggle" class="sr-only peer">
+                <div class="w-10 h-5 bg-white/20 peer-checked:bg-gf-green rounded-full transition peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:w-4 after:h-4 after:transition"></div>
+              </label>
+            </div>
+            <p class="text-xs text-white/60">Used to show relevant promotions and seasonal offers from local producers.</p>
+          </div>
+        </div>
+        <div class="flex justify-end mt-4">
+          <button onclick="saveCustomConsent()" class="px-5 py-2.5 text-sm font-semibold bg-gf-green text-white rounded-xl hover:bg-gf-green-600 transition">
+            Save My Preferences
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!--  SCRIPTS                                                               -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <script>
+    // ── Navbar scroll effect ───────────────────────────────────────────────
+    const nav = document.getElementById('main-nav');
+    const isHomePage = {% if request.resolver_match.url_name|lower == 'home' %}true{% else %}false{% endif %};
+
+    function updateNavbar() {
+      if (!isHomePage) return;
+      const scrolled = window.scrollY > 80;
+      if (scrolled) {
+        nav.classList.add('scrolled');
+        nav.classList.remove('py-4');
+        nav.classList.add('py-3');
+      } else {
+        nav.classList.remove('scrolled');
+        nav.classList.remove('py-3');
+        nav.classList.add('py-4');
+      }
+    }
+
+    window.addEventListener('scroll', updateNavbar, { passive: true });
+    updateNavbar();
+
+    // ── Mobile menu toggle ─────────────────────────────────────────────────
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+
+    // ── Cookie consent ────────────────────────────────────────────────────
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+
+    function setCookieConsent(consentType) {
+      fetch('{% url "set_cookie_consent" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ consent: consentType })
+      }).then(() => {
+        hideCookieBanner();
+      }).catch(() => {
+        // Fallback: set cookie directly
+        document.cookie = `cookie_consent=${consentType};max-age=${365 * 24 * 60 * 60};path=/;SameSite=Lax`;
+        hideCookieBanner();
+      });
+    }
+
+    function saveCustomConsent() {
+      const analytics = document.getElementById('analytics-toggle').checked;
+      const marketing = document.getElementById('marketing-toggle').checked;
+      const type = (analytics && marketing) ? 'all' : analytics ? 'analytics' : 'essential';
+      setCookieConsent(type);
+    }
+
+    function hideCookieBanner() {
+      const banner = document.getElementById('cookie-banner');
+      banner.style.transform = 'translateY(100%)';
+      setTimeout(() => banner.style.display = 'none', 500);
+    }
+
+    function toggleCookieDetails() {
+      document.getElementById('cookie-details').classList.toggle('hidden');
+    }
+
+    // Show banner only if consent not yet recorded
+    window.addEventListener('DOMContentLoaded', () => {
+      const consent = getCookie('cookie_consent');
+      if (!consent) {
+        const banner = document.getElementById('cookie-banner');
+        banner.style.display = 'block';
+        // Slide in after a short delay
+        setTimeout(() => { banner.style.transform = 'translateY(0)'; }, 200);
+        banner.style.transform = 'translateY(100%)';
+      }
+    });
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

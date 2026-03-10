@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+{% block title %}Greenfield Local Hub — Fresh Local Produce{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--  HERO SECTION — Full screen, farmer milking cow background              -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+  <!-- Background image: farmer milking a cow -->
+  <!-- Replace this URL with your own image if desired -->
+  <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+       style="background-image: url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1920&q=80');">
+  </div>
+
+  <!-- Gradient overlay for readability -->
+  <div class="absolute inset-0 bg-gradient-to-b from-gf-navy/70 via-gf-navy/50 to-gf-navy/80"></div>
+
+  <!-- Subtle animated farm pattern overlay -->
+  <div class="absolute inset-0 opacity-10"
+       style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.4) 1px, transparent 0); background-size: 40px 40px;"></div>
+
+  <!-- Hero content -->
+  <div class="relative z-10 text-center text-white px-4 sm:px-6 max-w-4xl mx-auto py-32">
+    <div class="inline-flex items-center gap-2 bg-gf-green/30 backdrop-blur-sm border border-gf-green/40 text-gf-green-100 text-sm font-medium px-4 py-2 rounded-full mb-8 animate-pulse">
+      <span class="w-2 h-2 bg-gf-green-300 rounded-full"></span>
+      Freshly harvested this week
+    </div>
+    <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-6 drop-shadow-lg">
+      From Our Fields<br/>
+      <span class="text-gf-green-300">To Your Table</span>
+    </h1>
+    <p class="text-lg sm:text-xl text-white/85 max-w-2xl mx-auto mb-10 leading-relaxed">
+      Greenfield Local Hub connects you directly with local farmers and producers.
+      Seasonal, sustainable, and always fresh.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <a href="{% url 'product_list' %}"
+         class="group inline-flex items-center gap-3 bg-gf-green hover:bg-gf-green-600 text-white font-semibold text-lg px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-0.5">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        Shop Now
+        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+      <a href="{% url 'about' %}"
+         class="inline-flex items-center gap-2 text-white/90 hover:text-white font-medium text-lg px-6 py-4 rounded-2xl border border-white/30 hover:border-white/60 backdrop-blur-sm transition">
+        Learn Our Story
+      </a>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="flex flex-wrap justify-center gap-8 mt-16 pt-8 border-t border-white/20">
+      <div class="text-center">
+        <div class="font-display font-bold text-3xl text-gf-green-300">50+</div>
+        <div class="text-sm text-white/70 mt-1">Local Producers</div>
+      </div>
+      <div class="text-center">
+        <div class="font-display font-bold text-3xl text-gf-green-300">200+</div>
+        <div class="text-sm text-white/70 mt-1">Fresh Products</div>
+      </div>
+      <div class="text-center">
+        <div class="font-display font-bold text-3xl text-gf-green-300">5,000+</div>
+        <div class="text-sm text-white/70 mt-1">Happy Customers</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 animate-bounce">
+    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--  SHOP BY CATEGORY GRID                                                  -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="py-20 bg-gradient-to-b from-white to-green-50/30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-14">
+      <p class="text-gf-green font-semibold text-sm uppercase tracking-widest mb-3">Explore</p>
+      <h2 class="font-display text-4xl sm:text-5xl text-gf-navy font-bold">Shop By Category</h2>
+      <p class="text-gray-500 mt-4 max-w-lg mx-auto">Explore our wide range of locally-sourced produce, from dairy to seasonal vegetables.</p>
+    </div>
+
+    {% if categories %}
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      {% for category in categories %}
+      <a href="{% url 'product_list' %}?category={{ category.slug }}"
+         class="group relative overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 flex flex-col items-center text-center">
+        <!-- Category icon -->
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gf-green-50 to-blue-50 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+          {{ category.icon|default:"🌱" }}
+        </div>
+        <h3 class="font-display font-semibold text-gf-navy text-lg mb-1">{{ category.name }}</h3>
+        <p class="text-xs text-gray-400">{{ category.description|truncatechars:50 }}</p>
+        <span class="mt-3 text-xs font-semibold text-gf-green opacity-0 group-hover:opacity-100 transition flex items-center gap-1">
+          Browse <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        </span>
+        <!-- Hover accent line -->
+        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-gf-green to-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <!-- Placeholder categories if none in DB -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      {% for item in "🥛,🥕,🍞,🧀,🍯,🥚,🍎,🥬" %}
+      <div class="rounded-2xl bg-white border border-gray-100 shadow-sm p-6 flex flex-col items-center text-center animate-pulse">
+        <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center text-3xl mb-4">{{ item }}</div>
+        <div class="h-4 bg-gray-200 rounded w-20"></div>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="text-center text-gray-400 mt-6 text-sm">Add categories in the admin panel to display them here.</p>
+    {% endif %}
+
+    <div class="text-center mt-10">
+      <a href="{% url 'product_list' %}" class="inline-flex items-center gap-2 text-gf-green font-semibold hover:text-gf-green-700 transition">
+        View All Products
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--  FEATURED PRODUCTS                                                       -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
+      <div>
+        <p class="text-gf-green font-semibold text-sm uppercase tracking-widest mb-3">This Week's Picks</p>
+        <h2 class="font-display text-4xl sm:text-5xl text-gf-navy font-bold">Featured Products</h2>
+      </div>
+      <a href="{% url 'product_list' %}" class="flex-shrink-0 inline-flex items-center gap-2 text-sm font-semibold text-gf-green border border-gf-green rounded-xl px-4 py-2 hover:bg-gf-green hover:text-white transition">
+        See All <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    {% if featured_products %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% for product in featured_products %}
+      <div class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col">
+        <!-- Product image -->
+        <a href="{{ product.get_absolute_url }}" class="block relative overflow-hidden bg-gradient-to-br from-green-50 to-blue-50 h-48">
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          {% else %}
+          <div class="w-full h-full flex items-center justify-center text-6xl">
+            {{ product.category.icon|default:"🌿" }}
+          </div>
+          {% endif %}
+          <!-- Badges -->
+          <div class="absolute top-3 left-3 flex flex-wrap gap-1">
+            {% if product.is_organic %}
+            <span class="bg-gf-green text-white text-xs font-semibold px-2 py-0.5 rounded-full">Organic</span>
+            {% endif %}
+            {% if not product.in_stock %}
+            <span class="bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">Out of Stock</span>
+            {% endif %}
+          </div>
+        </a>
+        <!-- Product info -->
+        <div class="p-4 flex flex-col flex-1">
+          <p class="text-xs text-gf-green font-medium mb-1">{{ product.category.name|default:"Local Produce" }}</p>
+          <a href="{{ product.get_absolute_url }}" class="font-display font-semibold text-gf-navy hover:text-gf-green transition text-base leading-snug mb-1">{{ product.name }}</a>
+          {% if product.producer.profile.farm_name %}
+          <p class="text-xs text-gray-400 mb-2">by {{ product.producer.profile.farm_name }}</p>
+          {% endif %}
+          <!-- Rating -->
+          {% if product.average_rating %}
+          <div class="flex items-center gap-1 mb-3">
+            {% for i in "12345" %}
+            <svg class="w-3.5 h-3.5 {% if forloop.counter <= product.average_rating %}text-gf-amber{% else %}text-gray-200{% endif %}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            {% endfor %}
+            <span class="text-xs text-gray-400 ml-1">({{ product.review_count }})</span>
+          </div>
+          {% endif %}
+          <div class="mt-auto flex items-center justify-between">
+            <div>
+              <span class="font-display font-bold text-xl text-gf-navy">£{{ product.price }}</span>
+              <span class="text-xs text-gray-400 ml-1">/ {{ product.get_unit_display }}</span>
+            </div>
+            {% if product.in_stock %}
+            <form method="post" action="{% url 'add_to_cart' product.id %}">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1" />
+              <button type="submit" class="w-9 h-9 bg-gf-green text-white rounded-xl hover:bg-gf-green-600 transition flex items-center justify-center shadow-sm" aria-label="Add to cart">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-20 bg-gray-50 rounded-3xl">
+      <span class="text-6xl mb-4 block">🌱</span>
+      <p class="text-gray-400">Products will appear here once producers add them.</p>
+      <a href="{% url 'product_list' %}" class="mt-4 inline-block text-gf-green font-medium hover:underline">Browse the shop →</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--  WHY GREENFIELD — info section                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="py-20 bg-gradient-to-br from-gf-navy to-gf-navy-800 text-white overflow-hidden relative">
+  <!-- Decorative elements -->
+  <div class="absolute top-0 right-0 w-96 h-96 bg-gf-green/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+  <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 relative">
+    <div class="text-center mb-14">
+      <p class="text-gf-green-300 font-semibold text-sm uppercase tracking-widest mb-3">Why Choose Us</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-bold">The Greenfield Difference</h2>
+      <p class="text-white/70 mt-4 max-w-xl mx-auto">
+        <!-- This is a placeholder — update this text with your actual company information -->
+        This is a place for information about Greenfield Local Hub. You can update this description to highlight your cooperative's unique values and story.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
+        <div class="text-5xl mb-5">🌾</div>
+        <h3 class="font-display font-semibold text-xl mb-3">Locally Sourced</h3>
+        <p class="text-white/65 text-sm leading-relaxed">
+          <!-- This is a placeholder — replace with your information -->
+          This is a placeholder for information about how Greenfield sources produce from local farms within the region. Update this with real content about your sourcing practices.
+        </p>
+      </div>
+      <div class="text-center p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
+        <div class="text-5xl mb-5">🤝</div>
+        <h3 class="font-display font-semibold text-xl mb-3">Cooperative Model</h3>
+        <p class="text-white/65 text-sm leading-relaxed">
+          <!-- This is a placeholder — replace with your information -->
+          This is a placeholder for information about the cooperative model Greenfield operates under. Replace with details about how you support your producer members.
+        </p>
+      </div>
+      <div class="text-center p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
+        <div class="text-5xl mb-5">🌍</div>
+        <h3 class="font-display font-semibold text-xl mb-3">Sustainable Farming</h3>
+        <p class="text-white/65 text-sm leading-relaxed">
+          <!-- This is a placeholder — replace with your information -->
+          This is a placeholder for information about Greenfield's commitment to sustainable and ethical farming. Add your environmental policies and green credentials here.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--  CUSTOMER REVIEWS — from database, highest rated only                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="py-20 bg-gradient-to-b from-green-50/30 to-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-14">
+      <p class="text-gf-green font-semibold text-sm uppercase tracking-widest mb-3">Real Reviews</p>
+      <h2 class="font-display text-4xl sm:text-5xl text-gf-navy font-bold">What Our Customers Say</h2>
+      <p class="text-gray-500 mt-4 max-w-lg mx-auto">Genuine reviews from our community of happy customers, displaying only our highest-rated feedback.</p>
+    </div>
+
+    {% if top_reviews %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for review in top_reviews %}
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition p-6 flex flex-col">
+        <!-- Stars -->
+        <div class="flex gap-0.5 mb-4">
+          {% for i in "12345" %}
+          <svg class="w-4 h-4 {% if forloop.counter <= review.rating %}text-gf-amber{% else %}text-gray-200{% endif %}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          {% endfor %}
+        </div>
+        <!-- Review title -->
+        {% if review.title %}
+        <h4 class="font-display font-semibold text-gf-navy mb-2">{{ review.title }}</h4>
+        {% endif %}
+        <!-- Comment -->
+        <p class="text-gray-600 text-sm leading-relaxed flex-1 mb-4">"{{ review.comment|truncatechars:160 }}"</p>
+        <!-- Author -->
+        <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-gf-green to-blue-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
+            {{ review.user.first_name|first|upper }}{{ review.user.last_name|first|upper }}
+          </div>
+          <div>
+            <p class="font-semibold text-sm text-gf-navy">{{ review.user.get_full_name|default:review.user.username }}</p>
+            <p class="text-xs text-gray-400">on <a href="{{ review.product.get_absolute_url }}" class="text-gf-green hover:underline">{{ review.product.name }}</a></p>
+          </div>
+          <div class="ml-auto text-xs text-gray-300">{{ review.created_at|date:"M Y" }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-16 bg-white rounded-3xl border border-gray-100">
+      <span class="text-5xl mb-4 block">⭐</span>
+      <p class="text-gray-400">Reviews will appear here once customers leave feedback on products.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--  SIGN UP BANNER                                                          -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+{% if not user.is_authenticated %}
+<section class="py-16 bg-gf-green">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+    <h2 class="font-display text-3xl sm:text-4xl font-bold text-white mb-4">Join the Greenfield Community</h2>
+    <p class="text-white/80 text-lg mb-8">Create a free account to order from local producers, track your deliveries, and support your local farming community.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="{% url 'signup' %}" class="bg-white text-gf-green font-bold px-8 py-4 rounded-2xl hover:bg-gray-50 transition shadow-lg text-lg">Get Started Free</a>
+      <a href="{% url 'login' %}" class="border-2 border-white text-white font-bold px-8 py-4 rounded-2xl hover:bg-white/10 transition text-lg">Sign In</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

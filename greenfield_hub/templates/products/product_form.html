@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — Greenfield Local Hub{% endblock %}
+{% block content %}
+<div class="pt-24 pb-16 bg-gray-50 min-h-screen">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6">
+    <div class="mb-6">
+      <a href="{% url 'producer_dashboard' %}" class="text-sm text-gf-green hover:underline">← Back to Dashboard</a>
+    </div>
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+      <h1 class="font-display text-3xl font-bold text-gf-navy mb-6">{{ title }}</h1>
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Product Name *</label>
+          {{ form.name }}
+          {% if form.name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.name.errors|join:", " }}</p>{% endif %}
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Short Description</label>
+          {{ form.short_description }}
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Full Description *</label>
+          {{ form.description }}
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Price (£) *</label>
+            {{ form.price }}
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Stock Quantity *</label>
+            {{ form.stock }}
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Unit *</label>
+            {{ form.unit }}
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Category</label>
+            {{ form.category }}
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Product Image</label>
+          {{ form.image }}
+          {% if product.image %}<img src="{{ product.image.url }}" alt="Current" class="mt-2 w-24 h-24 rounded-xl object-cover">{% endif %}
+        </div>
+        <div class="mb-6 flex flex-wrap gap-6">
+          <label class="flex items-center gap-2 cursor-pointer">{{ form.is_active }}<span class="text-sm font-medium text-gray-700">Active (visible in shop)</span></label>
+          <label class="flex items-center gap-2 cursor-pointer">{{ form.is_organic }}<span class="text-sm font-medium text-gray-700">Organic</span></label>
+          <label class="flex items-center gap-2 cursor-pointer">{{ form.is_featured }}<span class="text-sm font-medium text-gray-700">Featured on homepage</span></label>
+        </div>
+        <button type="submit" class="w-full py-4 bg-gf-green text-white font-bold text-lg rounded-2xl hover:bg-gf-green-600 transition shadow-lg">
+          {{ title }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

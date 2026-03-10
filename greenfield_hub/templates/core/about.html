@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}About Us — Greenfield Local Hub{% endblock %}
+{% block content %}
+<div class="pt-24 pb-16 min-h-screen">
+  <!-- Hero -->
+  <div class="bg-gradient-to-br from-gf-navy to-gf-navy-800 text-white py-20 mb-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+      <p class="text-gf-green-300 font-semibold text-sm uppercase tracking-widest mb-4">Who We Are</p>
+      <h1 class="font-display text-5xl sm:text-6xl font-bold mb-6">About Greenfield Local Hub</h1>
+      <p class="text-white/75 text-xl leading-relaxed max-w-2xl mx-auto">
+        <!-- This is a placeholder — replace with your actual company tagline -->
+        This is a placeholder for the company tagline and introduction. Replace with Greenfield's actual mission statement and overview.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <!-- Company info sections from database -->
+    {% for section in sections %}
+    <div class="mb-16 {% if forloop.even %}lg:flex-row-reverse{% endif %} lg:flex items-center gap-12">
+      <div class="flex-1">
+        <p class="text-gf-green font-semibold text-sm uppercase tracking-widest mb-3">{{ section.get_section_display }}</p>
+        <h2 class="font-display text-4xl font-bold text-gf-navy mb-4">{{ section.title }}</h2>
+        {% if section.subtitle %}<p class="text-lg text-gray-500 mb-4">{{ section.subtitle }}</p>{% endif %}
+        <div class="prose text-gray-600 leading-relaxed">{{ section.content|linebreaks }}</div>
+      </div>
+      <div class="flex-shrink-0 w-full lg:w-72 h-64 bg-gradient-to-br from-green-50 to-blue-100 rounded-3xl flex items-center justify-center text-7xl mt-8 lg:mt-0">
+        {% if section.section == 'about' %}🌿{% elif section.section == 'mission' %}🎯{% elif section.section == 'history' %}📜{% elif section.section == 'values' %}💚{% elif section.section == 'how_it_works' %}⚙️{% else %}📍{% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <!-- Placeholder content if no database entries -->
+    <div class="mb-16 lg:flex items-center gap-12">
+      <div class="flex-1">
+        <p class="text-gf-green font-semibold text-sm uppercase tracking-widest mb-3">Our Story</p>
+        <h2 class="font-display text-4xl font-bold text-gf-navy mb-4">A Cooperative Built on Trust</h2>
+        <p class="text-gray-600 leading-relaxed mb-4">
+          <!-- This is a placeholder — replace with your actual company history -->
+          This is a placeholder for Greenfield Local Hub's company story. Add your history, founding principles, and what makes your cooperative unique using the Django admin panel under Company Info sections.
+        </p>
+        <p class="text-gray-600 leading-relaxed">
+          <!-- This is a placeholder — replace with your actual company description -->
+          This is a placeholder for additional company information. You can manage all About page content through the admin panel by adding CompanyInfo entries.
+        </p>
+      </div>
+      <div class="flex-shrink-0 w-full lg:w-72 h-64 bg-gradient-to-br from-green-50 to-blue-100 rounded-3xl flex items-center justify-center text-7xl">🌾</div>
+    </div>
+    {% endfor %}
+
+    <!-- FAQ Section -->
+    {% if faqs %}
+    <div class="mb-16">
+      <div class="text-center mb-10">
+        <h2 class="font-display text-4xl font-bold text-gf-navy">Frequently Asked Questions</h2>
+      </div>
+      <div class="max-w-3xl mx-auto space-y-3">
+        {% for faq in faqs %}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <button class="w-full text-left px-6 py-5 flex items-center justify-between font-semibold text-gf-navy hover:bg-gray-50 transition" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-180')">
+            {{ faq.question }}
+            <svg class="w-5 h-5 flex-shrink-0 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="hidden px-6 pb-5 text-gray-600 text-sm leading-relaxed">{{ faq.answer }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

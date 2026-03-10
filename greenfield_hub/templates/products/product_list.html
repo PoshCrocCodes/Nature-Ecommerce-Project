@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% block title %}Shop — Greenfield Local Hub{% endblock %}
+
+{% block content %}
+<div class="pt-24 pb-16 min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+
+    <!-- Page header -->
+    <div class="mb-8">
+      <h1 class="font-display text-4xl font-bold text-gf-navy mb-2">
+        {% if selected_category %}{{ selected_category.icon }} {{ selected_category.name }}
+        {% elif query %}Search: "{{ query }}"
+        {% else %}All Products{% endif %}
+      </h1>
+      <p class="text-gray-500">{{ total_count }} product{{ total_count|pluralize }} found</p>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+
+      <!-- ── Sidebar filters ────────────────────────────────────────────── -->
+      <aside class="lg:w-64 flex-shrink-0">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sticky top-24">
+          <h2 class="font-display font-semibold text-lg text-gf-navy mb-5">Filters</h2>
+
+          <form method="get" id="filter-form">
+            <!-- Preserve search query -->
+            {% if query %}<input type="hidden" name="q" value="{{ query }}" />{% endif %}
+
+            <!-- Search -->
+            <div class="mb-6">
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Search</label>
+              <div class="relative">
+                <input type="text" name="q" value="{{ query }}" placeholder="Search products..."
+                       class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gf-green focus:border-transparent transition" />
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="mb-6">
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Category</label>
+              <div class="space-y-1">
+                <a href="{% url 'product_list' %}{% if query %}?q={{ query }}{% endif %}"
+                   class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition {% if not selected_category %}bg-green-50 text-gf-green font-semibold{% else %}text-gray-600 hover:bg-gray-50{% endif %}">
+                  All Products
+                </a>
+                {% for cat in categories %}
+                <a href="{% url 'product_list' %}?category={{ cat.slug }}{% if query %}&q={{ query }}{% endif %}"
+                   class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition {% if selected_category.slug == cat.slug %}bg-green-50 text-gf-green font-semibold{% else %}text-gray-600 hover:bg-gray-50{% endif %}">
+                  <span>{{ cat.icon }}</span> {{ cat.name }}
+                </a>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Price range -->
+            <div class="mb-6">
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Price Range (£)</label>
+              <div class="flex gap-2">
+                <input type="number" name="min_price" value="{{ min_price }}" placeholder="Min" min="0" step="0.50"
+                       class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gf-green transition" />
+                <input type="number" name="max_price" value="{{ max_price }}" placeholder="Max" min="0" step="0.50"
+                       class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gf-green transition" />
+              </div>
+            </div>
+
+            <!-- Checkboxes -->
+            <div class="mb-6 space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" name="organic" value="true" {% if organic == 'true' %}checked{% endif %}
+                       class="w-4 h-4 text-gf-green rounded border-gray-300 focus:ring-gf-green" />
+                <span class="text-sm text-gray-600">🌱 Organic only</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" name="in_stock" value="true" {% if in_stock == 'true' %}checked{% endif %}
+                       class="w-4 h-4 text-gf-green rounded border-gray-300 focus:ring-gf-green" />
+                <span class="text-sm text-gray-600">✅ In stock only</span>
+              </label>
+            </div>
+
+            <!-- Sort -->
+            <div class="mb-6">
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Sort By</label>
+              <select name="sort" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gf-green transition">
+                <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest First</option>
+                <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                <option value="name" {% if sort == 'name' %}selected{% endif %}>Name A–Z</option>
+                <option value="rating" {% if sort == 'rating' %}selected{% endif %}>Highest Rated</option>
+              </select>
+            </div>
+
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category.slug }}" />{% endif %}
+
+            <button type="submit" class="w-full py-3 bg-gf-green text-white font-semibold rounded-xl hover:bg-gf-green-600 transition text-sm">
+              Apply Filters
+            </button>
+            <a href="{% url 'product_list' %}" class="block text-center mt-2 text-sm text-gray-400 hover:text-gray-600 transition">
+              Clear all
+            </a>
+          </form>
+        </div>
+      </aside>
+
+      <!-- ── Product grid ───────────────────────────────────────────────── -->
+      <div class="flex-1">
+        {% if products %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          {% for product in products %}
+          <div class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 overflow-hidden flex flex-col">
+            <a href="{{ product.get_absolute_url }}" class="block relative overflow-hidden bg-gradient-to-br from-green-50 to-blue-50 h-44">
+              {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              {% else %}
+              <div class="w-full h-full flex items-center justify-center text-5xl">{{ product.category.icon|default:"🌿" }}</div>
+              {% endif %}
+              <div class="absolute top-3 left-3 flex flex-wrap gap-1">
+                {% if product.is_organic %}<span class="bg-gf-green text-white text-xs font-semibold px-2 py-0.5 rounded-full">Organic</span>{% endif %}
+                {% if not product.in_stock %}<span class="bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">Out of Stock</span>{% endif %}
+              </div>
+            </a>
+            <div class="p-4 flex flex-col flex-1">
+              <p class="text-xs text-gf-green font-medium mb-1">{{ product.category.name|default:"Produce" }}</p>
+              <a href="{{ product.get_absolute_url }}" class="font-display font-semibold text-gf-navy hover:text-gf-green transition text-base leading-snug mb-1">{{ product.name }}</a>
+              {% if product.producer.profile.farm_name %}
+              <p class="text-xs text-gray-400 mb-2">by {{ product.producer.profile.farm_name }}</p>
+              {% endif %}
+              {% if product.avg_rating %}
+              <div class="flex items-center gap-1 mb-2">
+                {% for i in "12345" %}
+                <svg class="w-3 h-3 {% if forloop.counter <= product.avg_rating %}text-gf-amber{% else %}text-gray-200{% endif %}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                {% endfor %}
+                <span class="text-xs text-gray-400 ml-0.5">{{ product.avg_rating|floatformat:1 }}</span>
+              </div>
+              {% endif %}
+              <p class="text-xs text-gray-400 flex-1 mb-3">{{ product.short_description|default:product.description|truncatechars:80 }}</p>
+              <div class="mt-auto flex items-center justify-between">
+                <div>
+                  <span class="font-display font-bold text-lg text-gf-navy">£{{ product.price }}</span>
+                  <span class="text-xs text-gray-400 ml-1">/ {{ product.get_unit_display }}</span>
+                </div>
+                {% if product.in_stock %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="quantity" value="1" />
+                  <button type="submit" class="flex items-center gap-1.5 bg-gf-green text-white text-sm font-semibold px-3 py-2 rounded-xl hover:bg-gf-green-600 transition shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Add
+                  </button>
+                </form>
+                {% else %}
+                <span class="text-xs text-red-400 font-medium">Out of stock</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="flex justify-center items-center gap-2 mt-10">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&category={{ selected_category.slug }}&sort={{ sort }}"
+             class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 transition">← Prev</a>
+          {% endif %}
+          {% for num in page_obj.paginator.page_range %}
+          <a href="?page={{ num }}&q={{ query }}&category={{ selected_category.slug }}&sort={{ sort }}"
+             class="w-10 h-10 flex items-center justify-center rounded-xl text-sm font-medium transition
+             {% if page_obj.number == num %}bg-gf-green text-white{% else %}bg-white border border-gray-200 hover:bg-gray-50{% endif %}">{{ num }}</a>
+          {% endfor %}
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&category={{ selected_category.slug }}&sort={{ sort }}"
+             class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 transition">Next →</a>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-24 bg-white rounded-2xl border border-gray-100">
+          <span class="text-6xl mb-4 block">🌱</span>
+          <h3 class="font-display font-semibold text-xl text-gf-navy mb-2">No products found</h3>
+          <p class="text-gray-400 mb-6">Try adjusting your filters or search terms.</p>
+          <a href="{% url 'product_list' %}" class="bg-gf-green text-white font-semibold px-6 py-3 rounded-xl hover:bg-gf-green-600 transition">Browse All Products</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Auto-submit on sort/checkbox change
+  document.querySelector('select[name="sort"]').addEventListener('change', () => {
+    document.getElementById('filter-form').submit();
+  });
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => document.getElementById('filter-form').submit());
+  });
+</script>
+{% endblock %}
